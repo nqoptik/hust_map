@@ -1,6 +1,6 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <string>
 
 #ifdef __linux__
@@ -100,7 +100,8 @@ void flag();
 void small_tree(float base_radius, float top_radius, float height, float radius, float rind_repeat, float xz_leaves_repeat, float y_leaves_repeat);
 void big_tree(float base_radius, float rind_height, float rind_repeat, float root_height, float radius, int canopy, float xz_leaves_repeat, float y_leaves_repeat, int tex);
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
     glutInitWindowSize(1360, 700);
@@ -118,24 +119,28 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-GLuint load_texture(std::string file_name, int width, int height) {
+GLuint load_texture(std::string file_name, int width, int height)
+{
     GLuint texture;
     unsigned char* data;
     FILE* file = fopen(file_name.c_str(), "rb");
 
-    if (file == NULL) {
+    if (file == NULL)
+    {
         printf("File Not Found : %s.\n", file_name.c_str());
         return 0;
     }
 
     fseek(file, 54, SEEK_CUR);
     data = (unsigned char*)malloc(width * height * 3);
-    if (fread(data, width * height * 3, 1, file) != 1) {
+    if (fread(data, width * height * 3, 1, file) != 1)
+    {
         printf("Faied to read data.\n");
     }
     fclose(file);
 
-    for (int i = 0; i < width * height; ++i) {
+    for (int i = 0; i < width * height; ++i)
+    {
         int index = i * 3;
         unsigned char b, r;
         b = data[index];
@@ -157,7 +162,8 @@ GLuint load_texture(std::string file_name, int width, int height) {
     return texture;
 }
 
-void get_textures() {
+void get_textures()
+{
     textures[0] = load_texture("textures/grass2.bmp", 1296, 1296);
     textures[1] = load_texture("textures/dam.bmp", 479, 144);
     textures[2] = load_texture("textures/leaves.bmp", 500, 369);
@@ -189,12 +195,14 @@ void get_textures() {
     textures[28] = load_texture("textures/leaves3.bmp", 1600, 1600);
 }
 
-void initialise() {
+void initialise()
+{
     glClearColor(0.1, 0.6, 1.0, 0.0);
     glEnable(GL_DEPTH_TEST);
 }
 
-void display() {
+void display()
+{
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glPushMatrix();
@@ -214,21 +222,27 @@ void display() {
     glutSwapBuffers();
 }
 
-void spin_display() {
+void spin_display()
+{
     if (jet_enable == 1)
+    {
         blob_x += jet_speed;
-
+    }
     if (blob_x > 400)
+    {
         blob_x = -30;
+    }
     glutPostRedisplay();
 }
 
-void timer(int n) {
+void timer(int n)
+{
     spin_display();
     glutTimerFunc(n, timer, n);
 }
 
-void reshape(int width, int height) {
+void reshape(int width, int height)
+{
     glViewport(0, 0, (GLsizei)width, (GLsizei)height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -238,12 +252,15 @@ void reshape(int width, int height) {
     gluLookAt(eye_x, eye_y, eye_z, centre_x, centre_y, centre_z, up_x, up_y, up_z);
 }
 
-void special(int key, int x, int y) {
+void special(int key, int x, int y)
+{
     float dxyz = sqrt((centre_z - eye_z) * (centre_z - eye_z) + (centre_x - eye_x) * (centre_x - eye_x) + (centre_y - eye_y) * (centre_y - eye_y));
     float d0xz = sqrt((centre_z - eye_z) * (centre_z - eye_z) + (centre_x - eye_x) * (centre_x - eye_x));
 
-    switch (key) {
-        case GLUT_KEY_F8: {
+    switch (key)
+    {
+        case GLUT_KEY_F8:
+        {
             eye_x = 4000;
             eye_y = 2500;
             eye_z = -1000;
@@ -254,8 +271,10 @@ void special(int key, int x, int y) {
             up_y = 1;
             up_z = 0;
             angle_xz = M_PI;
-        } break;
-        case GLUT_KEY_F9: {
+        }
+        break;
+        case GLUT_KEY_F9:
+        {
             eye_x = 4000;
             eye_y = 150;
             eye_z = 15000;
@@ -266,106 +285,149 @@ void special(int key, int x, int y) {
             up_y = 1;
             up_z = 0;
             angle_xz = 0;
-        } break;
-        case GLUT_KEY_LEFT: {
+        }
+        break;
+        case GLUT_KEY_LEFT:
+        {
             angle_xz += angle_step;
             centre_x = eye_x - d0xz * sinf(angle_xz);
             centre_z = eye_z - d0xz * cosf(angle_xz);
-        } break;
-        case GLUT_KEY_RIGHT: {
+        }
+        break;
+        case GLUT_KEY_RIGHT:
+        {
             angle_xz -= angle_step;
             centre_x = eye_x - d0xz * sinf(angle_xz);
             centre_z = eye_z - d0xz * cosf(angle_xz);
-        } break;
-        case GLUT_KEY_DOWN: {
-            if (angle_y > -M_PI / 3) {
+        }
+        break;
+        case GLUT_KEY_DOWN:
+        {
+            if (angle_y > -M_PI / 3)
+            {
                 angle_y -= angle_step;
                 float d1xz = dxyz * cosf(angle_y);
                 centre_y = eye_y + dxyz * sinf(angle_y);
                 centre_x = eye_x - d1xz * sinf(angle_xz);
                 centre_z = eye_z - d1xz * cosf(angle_xz);
             }
-        } break;
-        case GLUT_KEY_UP: {
-            if (angle_y < M_PI / 3) {
+        }
+        break;
+        case GLUT_KEY_UP:
+        {
+            if (angle_y < M_PI / 3)
+            {
                 angle_y += angle_step;
                 float d1xz = dxyz * cosf(angle_y);
                 centre_y = eye_y + dxyz * sinf(angle_y);
                 centre_x = eye_x - d1xz * sinf(angle_xz);
                 centre_z = eye_z - d1xz * cosf(angle_xz);
             }
-        } break;
-        case GLUT_KEY_HOME: {
+        }
+        break;
+        case GLUT_KEY_HOME:
+        {
             if (jet_speed < 15)
+            {
                 jet_speed += 0.1;
-        } break;
-        case GLUT_KEY_END: {
+            }
+        }
+        break;
+        case GLUT_KEY_END:
+        {
             if (jet_speed > 0.5)
+            {
                 jet_speed -= 0.1;
-        } break;
+            }
+        }
+        break;
         default:
             break;
     }
 
     if (angle_xz > 2 * M_PI)
+    {
         angle_xz = 0;
+    }
     if (angle_xz < -2 * M_PI)
+    {
         angle_xz = 0;
+    }
 
     glLoadIdentity();
     gluLookAt(eye_x, eye_y, eye_z, centre_x, centre_y, centre_z, up_x, up_y, up_z);
     glutPostRedisplay();
 }
 
-void keyboard(unsigned char key, int x, int y) {
+void keyboard(unsigned char key, int x, int y)
+{
     float cos = (eye_z - centre_z) / sqrt((centre_z - eye_z) * (centre_z - eye_z) + (centre_x - eye_x) * (centre_x - eye_x));
     float sin = (centre_x - eye_x) / sqrt((centre_z - eye_z) * (centre_z - eye_z) + (centre_x - eye_x) * (centre_x - eye_x));
 
-    switch (key) {
-        case 'a': {
+    switch (key)
+    {
+        case 'a':
+        {
             eye_x -= eye_step * cos;
             eye_z -= eye_step * sin;
             centre_x -= eye_step * cos;
             centre_z -= eye_step * sin;
-        } break;
-        case 'd': {
+        }
+        break;
+        case 'd':
+        {
             eye_x += eye_step * cos;
             eye_z += eye_step * sin;
             centre_x += eye_step * cos;
             centre_z += eye_step * sin;
-        } break;
-        case 'w': {
+        }
+        break;
+        case 'w':
+        {
             eye_x += eye_step * sin;
             eye_z -= eye_step * cos;
             centre_x += eye_step * sin;
             centre_z -= eye_step * cos;
-        } break;
-        case 's': {
+        }
+        break;
+        case 's':
+        {
             eye_x -= eye_step * sin;
             eye_z += eye_step * cos;
             centre_x -= eye_step * sin;
             centre_z += eye_step * cos;
-        } break;
-        case 'r': {
+        }
+        break;
+        case 'r':
+        {
             eye_y += eye_step;
             centre_y += eye_step;
-        } break;
-        case 'f': {
+        }
+        break;
+        case 'f':
+        {
             eye_y -= eye_step;
             centre_y -= eye_step;
-        } break;
-        case '+': {
-            if (eye_step < 100) {
+        }
+        break;
+        case '+':
+        {
+            if (eye_step < 100)
+            {
                 eye_step += 5;
                 angle_step = M_PI / (120 - eye_step);
             }
-        } break;
-        case '-': {
-            if (eye_step > 5) {
+        }
+        break;
+        case '-':
+        {
+            if (eye_step > 5)
+            {
                 eye_step -= 5;
                 angle_step = M_PI / (220 - 2 * eye_step);
             }
-        } break;
+        }
+        break;
 
         default:
             break;
@@ -376,19 +438,27 @@ void keyboard(unsigned char key, int x, int y) {
     glutPostRedisplay();
 }
 
-void mouse(int button, int state, int x, int y) {
-    switch (button) {
+void mouse(int button, int state, int x, int y)
+{
+    switch (button)
+    {
         case GLUT_LEFT_BUTTON:
-            if (state == GLUT_DOWN) {
+            if (state == GLUT_DOWN)
+            {
                 jet_enable = 1 - jet_enable;
             }
             break;
         case GLUT_RIGHT_BUTTON:
-            if (state == GLUT_DOWN) {
-                if (zoom < 4) {
+            if (state == GLUT_DOWN)
+            {
+                if (zoom < 4)
+                {
                     zoom *= 2;
-                } else
+                }
+                else
+                {
                     zoom = 1;
+                }
 
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
@@ -397,7 +467,8 @@ void mouse(int button, int state, int x, int y) {
             }
             break;
         case GLUT_MIDDLE_BUTTON:
-            if (state == GLUT_DOWN) {
+            if (state == GLUT_DOWN)
+            {
                 zoom = 1;
 
                 glMatrixMode(GL_PROJECTION);
@@ -415,7 +486,8 @@ void mouse(int button, int state, int x, int y) {
     glutPostRedisplay();
 }
 
-void draw_ground() {
+void draw_ground()
+{
     glPushMatrix();
     up_to_down_square_face(8000, 16500, 80, 165, 8);
     glPopMatrix();
@@ -436,7 +508,8 @@ void draw_ground() {
     glPopMatrix();
 }
 
-void draw_building() {
+void draw_building()
+{
     glPushMatrix();
     draw_building_ground();
     glPopMatrix();
@@ -479,7 +552,8 @@ void draw_building() {
     glPopMatrix();
 }
 
-void draw_building_ground() {
+void draw_building_ground()
+{
     glPushMatrix();
     glTranslatef(-1000, -230, -2000);
     outer_box(8000, 150, 3800, 160, 2.4, 76, 1, 1, 1, 1, 1, 24);
@@ -521,7 +595,8 @@ void draw_building_ground() {
     glPopMatrix();
 
     glPushMatrix();
-    for (int i = 1; i < 5; i++) {
+    for (int i = 1; i < 5; i++)
+    {
         glPushMatrix();
         glTranslatef(-1000, -110 - 30 * i, 1800);
         outer_box(8000, 30, 40 * i, 160, 0.6, 0.8 * i, 1, 1, 1, 1, 1, 24);
@@ -530,7 +605,8 @@ void draw_building_ground() {
     glPopMatrix();
 }
 
-void draw_building_trees() {
+void draw_building_trees()
+{
     glPushMatrix();
     glTranslatef(425, -70, 1275);
     big_tree(35, 800, 4, 200, 300, 6, 5, 2, 28);
@@ -552,7 +628,8 @@ void draw_building_trees() {
     glPopMatrix();
 }
 
-void draw_building_floor() {
+void draw_building_floor()
+{
     glPushMatrix();
     glTranslatef(0, -230, 0);
     outer_box(6000, 230, 600, 120, 4.6, 12, 12, 12, 12, 12, 1, 20);
@@ -568,7 +645,8 @@ void draw_building_floor() {
     outer_box(1700, 20, 500, 34, 0.4, 10, 1, 1, 1, 1, 1, 20);
     glPopMatrix();
 
-    for (int i = 1; i < 3; i++) {
+    for (int i = 1; i < 3; i++)
+    {
         glPushMatrix();
         glTranslatef(2300 - 50 * i, -20 - 30 * i, -500 - 40 * i);
         outer_box(1400 + 100 * i, 30, 500 + 40 * i, 28 + 2 * i, 0.6, 10 + 0.8 * i, 1, 1, 1, 1, 1, 24);
@@ -591,7 +669,8 @@ void draw_building_floor() {
     }
 }
 
-void draw_hall_floor() {
+void draw_hall_floor()
+{
     glPushMatrix();
     outer_box(1400, 10, 1100, 28, 0.2, 22, 1, 1, 1, 1, 1, 20);
     glPopMatrix();
@@ -602,7 +681,8 @@ void draw_hall_floor() {
     glPopMatrix();
 }
 
-void draw_rooms() {
+void draw_rooms()
+{
     glPushMatrix();
     room("leftedge");
     glPopMatrix();
@@ -643,14 +723,16 @@ void draw_rooms() {
     glPopMatrix();
 
     glPushMatrix();
-    for (int i = 1; i < 4; i++) {
+    for (int i = 1; i < 4; i++)
+    {
         glPushMatrix();
         glTranslatef(0, 350 * i, 0);
         room("leftedge");
         glPopMatrix();
 
         glPushMatrix();
-        for (int j = 1; j < 4; j++) {
+        for (int j = 1; j < 4; j++)
+        {
             glPushMatrix();
             glTranslatef(600 * j, 350 * i, 0);
             room("on");
@@ -659,7 +741,8 @@ void draw_rooms() {
         glPopMatrix();
 
         glPushMatrix();
-        for (int j = 4; j < 6; j++) {
+        for (int j = 4; j < 6; j++)
+        {
             glPushMatrix();
             glTranslatef(600 * j, 350 * i, 0);
             room("allhiden");
@@ -673,7 +756,8 @@ void draw_rooms() {
         glPopMatrix();
 
         glPushMatrix();
-        for (int j = 7; j < 9; j++) {
+        for (int j = 7; j < 9; j++)
+        {
             glPushMatrix();
             glTranslatef(600 * j, 350 * i, 0);
             room("on");
@@ -689,7 +773,8 @@ void draw_rooms() {
     glPopMatrix();
 
     glPushMatrix();
-    for (int k = 0; k < 2; k++) {
+    for (int k = 0; k < 2; k++)
+    {
         glPushMatrix();
         glTranslatef(2400, 0, 570 * k);
         small_pillar();
@@ -708,7 +793,8 @@ void draw_rooms() {
     glPopMatrix();
 }
 
-void draw_back_porch() {
+void draw_back_porch()
+{
     glPushMatrix();
     glTranslatef(0, 340, 0);
     outer_box(1400, 20, 1100, 28, 0.4, 22, 12, 12, 12, 12, 26, 20);
@@ -720,7 +806,8 @@ void draw_back_porch() {
     glPopMatrix();
 }
 
-void draw_vestibule() {
+void draw_vestibule()
+{
     glPushMatrix();
     glTranslated(0, 350, 0);
     draw_vestibule_panes();
@@ -736,14 +823,17 @@ void draw_vestibule() {
     covered();
     glPopMatrix();
 }
-void draw_vestibule_panes() {
+void draw_vestibule_panes()
+{
     glPushMatrix();
     outer_box(1200, 1050, 400, 24, 21, 8, 23, 23, 23, 23, 26, 23);
     glPopMatrix();
 
     glPushMatrix();
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
             glPushMatrix();
             glTranslatef(50 + 400 * i, 25 + 350 * j, 405);
             front_to_back_square_face(300, 300, 1, 1, 18);
@@ -758,7 +848,8 @@ void draw_vestibule_panes() {
     glPopMatrix();
 }
 
-void draw_vestibule_pillars() {
+void draw_vestibule_pillars()
+{
     glPushMatrix();
     big_pillar();
     glPopMatrix();
@@ -774,13 +865,15 @@ void draw_vestibule_pillars() {
     glPopMatrix();
 }
 
-void draw_stair_space() {
+void draw_stair_space()
+{
     glPushMatrix();
     outer_box(300, 1400, 400, 6, 28, 8, 23, 23, 23, 23, 23, 23);
     glPopMatrix();
 
     glPushMatrix();
-    for (int j = 0; j < 4; j++) {
+    for (int j = 0; j < 4; j++)
+    {
         glPushMatrix();
         glTranslatef(303, 25 + 350 * j, 50);
         right_to_left_square_face(300, 300, 1, 1, 18);
@@ -789,7 +882,8 @@ void draw_stair_space() {
     glPopMatrix();
 }
 
-void draw_building_ceiling() {
+void draw_building_ceiling()
+{
     glPushMatrix();
     outer_box(6100, 20, 700, 122, 0.4, 14, 12, 12, 12, 12, 26, 23);
     glPopMatrix();
@@ -800,7 +894,8 @@ void draw_building_ceiling() {
     glPopMatrix();
 }
 
-void up_to_down_square_face(float x, float z, float x_repeat, float z_repeat, int tex) {
+void up_to_down_square_face(float x, float z, float x_repeat, float z_repeat, int tex)
+{
     glPushMatrix();
     glBindTexture(GL_TEXTURE_2D, textures[tex]);
     glBegin(GL_QUADS);
@@ -818,7 +913,8 @@ void up_to_down_square_face(float x, float z, float x_repeat, float z_repeat, in
     glPopMatrix();
 }
 
-void down_to_up_square_face(float x, float z, float x_repeat, float z_repeat, int tex) {
+void down_to_up_square_face(float x, float z, float x_repeat, float z_repeat, int tex)
+{
     glPushMatrix();
     glBindTexture(GL_TEXTURE_2D, textures[tex]);
     glBegin(GL_QUADS);
@@ -838,7 +934,8 @@ void down_to_up_square_face(float x, float z, float x_repeat, float z_repeat, in
     glPopMatrix();
 }
 
-void front_to_back_square_face(float x, float y, float x_repeat, float y_repeat, int tex) {
+void front_to_back_square_face(float x, float y, float x_repeat, float y_repeat, int tex)
+{
     glPushMatrix();
     glBindTexture(GL_TEXTURE_2D, textures[tex]);
     glBegin(GL_QUADS);
@@ -856,7 +953,8 @@ void front_to_back_square_face(float x, float y, float x_repeat, float y_repeat,
     glPopMatrix();
 }
 
-void back_to_front_square_face(float x, float y, float x_repeat, float y_repeat, int tex) {
+void back_to_front_square_face(float x, float y, float x_repeat, float y_repeat, int tex)
+{
     glPushMatrix();
     glBindTexture(GL_TEXTURE_2D, textures[tex]);
     glBegin(GL_QUADS);
@@ -874,7 +972,8 @@ void back_to_front_square_face(float x, float y, float x_repeat, float y_repeat,
     glPopMatrix();
 }
 
-void right_to_left_square_face(float y, float z, float y_repeat, float z_repeat, int tex) {
+void right_to_left_square_face(float y, float z, float y_repeat, float z_repeat, int tex)
+{
     glPushMatrix();
     glBindTexture(GL_TEXTURE_2D, textures[tex]);
     glBegin(GL_QUADS);
@@ -892,7 +991,8 @@ void right_to_left_square_face(float y, float z, float y_repeat, float z_repeat,
     glPopMatrix();
 }
 
-void left_to_right_square_face(float y, float z, float y_repeat, float z_repeat, int tex) {
+void left_to_right_square_face(float y, float z, float y_repeat, float z_repeat, int tex)
+{
     glPushMatrix();
     glBindTexture(GL_TEXTURE_2D, textures[tex]);
     glBegin(GL_QUADS);
@@ -910,7 +1010,8 @@ void left_to_right_square_face(float y, float z, float y_repeat, float z_repeat,
     glPopMatrix();
 }
 
-void inner_box(float x, float y, float z, float x_repeat, float y_repeat, float z_repeat, int left, int right, int back, int front, int under, int upper) {
+void inner_box(float x, float y, float z, float x_repeat, float y_repeat, float z_repeat, int left, int right, int back, int front, int under, int upper)
+{
     glPushMatrix();
     right_to_left_square_face(y, z, y_repeat, z_repeat, left);
     glPopMatrix();
@@ -939,7 +1040,8 @@ void inner_box(float x, float y, float z, float x_repeat, float y_repeat, float 
     glPopMatrix();
 }
 
-void outer_box(float x, float y, float z, float x_repeat, float y_repeat, float z_repeat, int left, int right, int back, int front, int under, int upper) {
+void outer_box(float x, float y, float z, float x_repeat, float y_repeat, float z_repeat, int left, int right, int back, int front, int under, int upper)
+{
     glPushMatrix();
     left_to_right_square_face(y, z, y_repeat, z_repeat, left);
     glPopMatrix();
@@ -968,7 +1070,8 @@ void outer_box(float x, float y, float z, float x_repeat, float y_repeat, float 
     glPopMatrix();
 }
 
-void vertical_cylinder(float base_radius, float top_radius, float height, float xz_repeat, float y_repeat, int xz_split, int y_split, int tex) {
+void vertical_cylinder(float base_radius, float top_radius, float height, float xz_repeat, float y_repeat, int xz_split, int y_split, int tex)
+{
     glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
     glScalef(xz_repeat, y_repeat, 1);
@@ -992,7 +1095,8 @@ void vertical_cylinder(float base_radius, float top_radius, float height, float 
     glMatrixMode(GL_MODELVIEW);
 }
 
-void vertical_sphere(float radius, float xz_repeat, float y_repeat, int xz_split, int y_split, int tex) {
+void vertical_sphere(float radius, float xz_repeat, float y_repeat, int xz_split, int y_split, int tex)
+{
     glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
     glScalef(xz_repeat, y_repeat, 1);
@@ -1015,7 +1119,8 @@ void vertical_sphere(float radius, float xz_repeat, float y_repeat, int xz_split
     glMatrixMode(GL_MODELVIEW);
 }
 
-void horizonal_disk(float inner_radius, float outer_radius, float x_repeat, float z_repeat, int xz_split, int y_split, int tex) {
+void horizonal_disk(float inner_radius, float outer_radius, float x_repeat, float z_repeat, int xz_split, int y_split, int tex)
+{
     glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
     glScalef(x_repeat, z_repeat, 1);
@@ -1038,7 +1143,8 @@ void horizonal_disk(float inner_radius, float outer_radius, float x_repeat, floa
     glMatrixMode(GL_MODELVIEW);
 }
 
-void partial_horizonal_disk(float inner_radius, float outer_radius, float start_angle, float sweep_angle, float x_repeat, float z_repeat, int xz_split, int y_split, int tex) {
+void partial_horizonal_disk(float inner_radius, float outer_radius, float start_angle, float sweep_angle, float x_repeat, float z_repeat, int xz_split, int y_split, int tex)
+{
     glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
     glScalef(x_repeat, z_repeat, 1);
@@ -1061,7 +1167,8 @@ void partial_horizonal_disk(float inner_radius, float outer_radius, float start_
     glMatrixMode(GL_MODELVIEW);
 }
 
-void room_frame() {
+void room_frame()
+{
     glPushMatrix();
     outer_box(600, 350, 400, 12, 7, 8, 23, 23, 23, 25, 26, 23);
     glPopMatrix();
@@ -1072,31 +1179,36 @@ void room_frame() {
     glPopMatrix();
 }
 
-void eaves() {
+void eaves()
+{
     glPushMatrix();
     outer_box(600, 10, 200, 12, 0.2, 4, 12, 12, 12, 12, 26, 23);
     glPopMatrix();
 }
 
-void corridor() {
+void corridor()
+{
     glPushMatrix();
     outer_box(600, 10, 200, 12, 0.2, 4, 12, 12, 12, 12, 26, 20);
     glPopMatrix();
 }
 
-void small_pillar() {
+void small_pillar()
+{
     glPushMatrix();
     outer_box(30, 350, 30, 0.6, 7, 0.6, 12, 12, 12, 12, 12, 12);
     glPopMatrix();
 }
 
-void big_pillar() {
+void big_pillar()
+{
     glPushMatrix();
     outer_box(60, 350, 30, 1.2, 7, 0.6, 12, 12, 12, 12, 12, 12);
     glPopMatrix();
 }
 
-void room_pillars() {
+void room_pillars()
+{
     glPushMatrix();
     small_pillar();
     glPopMatrix();
@@ -1112,13 +1224,15 @@ void room_pillars() {
     glPopMatrix();
 }
 
-void left_front_handrail() {
+void left_front_handrail()
+{
     glPushMatrix();
     outer_box(290, 10, 10, 11.6, 0.2, 0.2, 6, 6, 6, 6, 6, 6);
     glPopMatrix();
 
     glPushMatrix();
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; i++)
+    {
         glPushMatrix();
         glTranslatef(34 + 15 * i, -125, 4);
         outer_box(2, 130, 2, 0.04, 2.6, 0.04, 6, 6, 6, 6, 6, 6);
@@ -1127,14 +1241,16 @@ void left_front_handrail() {
     glPopMatrix();
 }
 
-void right_front_handrail() {
+void right_front_handrail()
+{
     glPushMatrix();
     glTranslatef(290, 0, 0);
     outer_box(290, 10, 10, 11.6, 0.2, 0.2, 6, 6, 6, 6, 6, 6);
     glPopMatrix();
 
     glPushMatrix();
-    for (int i = 19; i < 35; i++) {
+    for (int i = 19; i < 35; i++)
+    {
         glPushMatrix();
         glTranslatef(34 + 15 * i, -125, 4);
         outer_box(2, 130, 2, 0.04, 2.6, 0.04, 6, 6, 6, 6, 6, 6);
@@ -1143,12 +1259,14 @@ void right_front_handrail() {
     glPopMatrix();
 }
 
-void edge_handrail() {
+void edge_handrail()
+{
     glPushMatrix();
     outer_box(10, 10, 195, 0.2, 0.2, 3.9, 6, 6, 6, 6, 6, 6);
     glPopMatrix();
 
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 9; i++)
+    {
         glPushMatrix();
         glTranslatef(4, -125, 21 + 17 * i);
         outer_box(2, 130, 2, 0.04, 2.6, 0.04, 6, 6, 6, 6, 6, 6);
@@ -1156,7 +1274,8 @@ void edge_handrail() {
     }
 }
 
-void window() {
+void window()
+{
     glPushMatrix();
     front_to_back_square_face(460, 180, 2.5, 1, 16);
     glPopMatrix();
@@ -1177,7 +1296,8 @@ void window() {
     glPopMatrix();
 }
 
-void door() {
+void door()
+{
     glPushMatrix();
     front_to_back_square_face(120, 280, 1, 1, 17);
     glPopMatrix();
@@ -1188,7 +1308,8 @@ void door() {
     glPopMatrix();
 }
 
-void room(std::string type) {
+void room(std::string type)
+{
     glPushMatrix();
     room_frame();
     glPopMatrix();
@@ -1208,15 +1329,18 @@ void room(std::string type) {
     room_pillars();
     glPopMatrix();
 
-    if (type != "allhiden") {
-        if (type != "lefthiden") {
+    if (type != "allhiden")
+    {
+        if (type != "lefthiden")
+        {
             glPushMatrix();
             glTranslatef(10, 130, 580);
             left_front_handrail();
             glPopMatrix();
         }
 
-        if (type != "righthiden") {
+        if (type != "righthiden")
+        {
             glPushMatrix();
             glTranslatef(10, 130, 580);
             right_front_handrail();
@@ -1224,14 +1348,16 @@ void room(std::string type) {
         }
     }
 
-    if (type == "leftedge") {
+    if (type == "leftedge")
+    {
         glPushMatrix();
         glTranslatef(10, 130, 395);
         edge_handrail();
         glPopMatrix();
     }
 
-    if (type == "rightedge") {
+    if (type == "rightedge")
+    {
         glPushMatrix();
         glTranslatef(580, 130, 395);
         edge_handrail();
@@ -1249,13 +1375,15 @@ void room(std::string type) {
     glPopMatrix();
 }
 
-void covered() {
+void covered()
+{
     glPushMatrix();
     outer_box(1700, 20, 500, 34, 0.4, 10, 12, 12, 12, 12, 26, 20);
     glPopMatrix();
 }
 
-void back_porch_pillars() {
+void back_porch_pillars()
+{
     glPushMatrix();
     big_pillar();
     glPopMatrix();
@@ -1271,7 +1399,8 @@ void back_porch_pillars() {
     glPopMatrix();
 }
 
-void centre_ground() {
+void centre_ground()
+{
     glPushMatrix();
     outer_box(6400, 10, 10500, 128, 0.2, 210, 1, 1, 1, 1, 1, 24);
     glPopMatrix();
@@ -1302,7 +1431,8 @@ void centre_ground() {
     glPopMatrix();
 
     glPushMatrix();
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; i++)
+    {
         glPushMatrix();
         glTranslatef(2700, 10 + 30 * i, 4120 + 30 * i);
         outer_box(1000, 30, 80 - 40 * i, 20, 0.6, 1.6 - 0.8 * i, 1, 1, 1, 1, 1, 7);
@@ -1316,7 +1446,8 @@ void centre_ground() {
     glPopMatrix();
 }
 
-void centre_grass() {
+void centre_grass()
+{
     glPushMatrix();
     glTranslatef(300, 10, 660);
     outer_box(2400, 10, 2400, 6, 0.025, 6, 0, 0, 0, 0, 0, 0);
@@ -1378,7 +1509,8 @@ void centre_grass() {
     glPopMatrix();
 }
 
-void stone() {
+void stone()
+{
     glPushMatrix();
     outer_box(480, 10, 250, 1.2, 0.025, 0.625, 0, 0, 0, 0, 0, 0);
     glPopMatrix();
@@ -1394,9 +1526,11 @@ void stone() {
     glPopMatrix();
 }
 
-void flags() {
+void flags()
+{
     glPushMatrix();
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 15; i++)
+    {
         glPushMatrix();
         glTranslatef(2660 - 130 * i, 20, 700);
         flag();
@@ -1410,72 +1544,83 @@ void flags() {
     glPopMatrix();
 }
 
-void centre_small_trees() {
+void centre_small_trees()
+{
     glPushMatrix();
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         glPushMatrix();
         glTranslatef(400 + 900 * i, 20, 2960);
         small_tree(10, 5, 120, 100, 2, 5, 2);
         glPopMatrix();
     }
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         glPushMatrix();
         glTranslatef(6000 - 900 * i, 20, 2960);
         small_tree(10, 5, 120, 100, 2, 5, 2);
         glPopMatrix();
     }
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         glPushMatrix();
         glTranslatef(400 + 900 * i, 110, 3400);
         small_tree(10, 5, 120, 100, 2, 5, 2);
         glPopMatrix();
     }
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         glPushMatrix();
         glTranslatef(6000 - 900 * i, 110, 3400);
         small_tree(10, 5, 120, 100, 2, 5, 2);
         glPopMatrix();
     }
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         glPushMatrix();
         glTranslatef(400 + 900 * i, 110, 7520);
         small_tree(10, 5, 120, 100, 2, 5, 2);
         glPopMatrix();
     }
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         glPushMatrix();
         glTranslatef(6000 - 900 * i, 110, 7520);
         small_tree(10, 5, 120, 100, 2, 5, 2);
         glPopMatrix();
     }
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         glPushMatrix();
         glTranslatef(400 + 900 * i, 20, 7960);
         small_tree(10, 5, 120, 100, 2, 5, 2);
         glPopMatrix();
     }
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         glPushMatrix();
         glTranslatef(6000 - 900 * i, 20, 7960);
         small_tree(10, 5, 120, 100, 2, 5, 2);
         glPopMatrix();
     }
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; i++)
+    {
         glPushMatrix();
         glTranslatef(400 + 5600 * i, 110, 4300);
         small_tree(10, 5, 120, 100, 2, 5, 2);
         glPopMatrix();
     }
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; i++)
+    {
         glPushMatrix();
         glTranslatef(400 + 5600 * i, 110, 6620);
         small_tree(10, 5, 120, 100, 2, 5, 2);
@@ -1484,18 +1629,23 @@ void centre_small_trees() {
     glPopMatrix();
 }
 
-void centre_big_trees() {
+void centre_big_trees()
+{
     glPushMatrix();
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; i++)
+    {
         glPushMatrix();
         glTranslatef(400 + 5600 * i, 20, 760);
         big_tree(30, 500, 2.5, 200, 200, 5, 5, 2, 22);
         glPopMatrix();
     }
 
-    for (int i = 0; i < 5; i++) {
-        if (i != 2) {
-            for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < 5; i++)
+    {
+        if (i != 2)
+        {
+            for (int j = 0; j < 3; j++)
+            {
                 glPushMatrix();
                 glTranslatef(400 + 1400 * i, 20, 10160 - 900 * j);
                 big_tree(20, 1000, 4, 250, 150, 7, 5, 2, 2);
@@ -1504,21 +1654,24 @@ void centre_big_trees() {
         }
     }
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; i++)
+    {
         glPushMatrix();
         glTranslatef(400 + 5600 * i, 110, 5460);
         big_tree(30, 500, 2.5, 200, 200, 5, 5, 2, 22);
         glPopMatrix();
     }
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; i++)
+    {
         glPushMatrix();
         glTranslatef(1300, 110, 4560 + 1800 * i);
         big_tree(30, 500, 2.5, 200, 200, 5, 5, 2, 22);
         glPopMatrix();
     }
 
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; i++)
+    {
         glPushMatrix();
         glTranslatef(5100, 110, 4560 + 1800 * i);
         big_tree(30, 500, 2.5, 200, 200, 5, 5, 2, 22);
@@ -1527,14 +1680,16 @@ void centre_big_trees() {
     glPopMatrix();
 }
 
-void centre_trees() {
+void centre_trees()
+{
     glPushMatrix();
     centre_small_trees();
     centre_big_trees();
     glPopMatrix();
 }
 
-void dam() {
+void dam()
+{
     glPushMatrix();
     vertical_cylinder(750, 750, 100, 30 * M_PI, 1, 50, 1, 1);
     glPopMatrix();
@@ -1554,9 +1709,11 @@ void dam() {
     glPopMatrix();
 }
 
-void water_spout() {
+void water_spout()
+{
     glPushMatrix();
-    for (int i = 0; i < 360; i += 15) {
+    for (int i = 0; i < 360; i += 15)
+    {
         glPushMatrix();
         glRotatef(i, 0, 1, 0);
         {
@@ -1583,16 +1740,20 @@ void water_spout() {
     glPopMatrix();
 }
 
-void jet() {
+void jet()
+{
     glPushMatrix();
-    for (int i = 0; i < 360; i += 15) {
-        for (int j = 1; j < 500; j++) {
+    for (int i = 0; i < 360; i += 15)
+    {
+        for (int j = 1; j < 500; j++)
+        {
             glPushMatrix();
             glRotatef(i, 0, 1, 0);
             glPushMatrix();
             float x = blob_x - 0.6 * j - i / 15;
 
-            if (x > -17.32 && x < 17.32) {
+            if (x > -17.32 && x < 17.32)
+            {
                 float jetfunc = 300 - x * x;
                 glTranslatef(73.5 + 10 * x, jetfunc, 0);
                 vertical_sphere(2.5, 1, 1, 6, 4, 20);
@@ -1605,7 +1766,8 @@ void jet() {
             glPushMatrix();
             x = blob_x - 50 - 0.4 * j - i / 15;
 
-            if (x > -12.25 && x < 12.25) {
+            if (x > -12.25 && x < 12.25)
+            {
                 float jetfunc = 150 - x * x;
                 glTranslatef(-500 + 15 * x, jetfunc, 0);
                 vertical_sphere(2.5, 1, 1, 5, 3, 20);
@@ -1617,13 +1779,15 @@ void jet() {
     glPopMatrix();
 }
 
-void jets() {
+void jets()
+{
     glPushMatrix();
     jet();
     glPopMatrix();
 }
 
-void centre() {
+void centre()
+{
     glPushMatrix();
     centre_ground();
     glPopMatrix();
@@ -1661,7 +1825,8 @@ void centre() {
     glPopMatrix();
 }
 
-void flag() {
+void flag()
+{
     glPushMatrix();
     vertical_cylinder(10, 5, 50, 1, 1, 30, 1, 7);
     glPopMatrix();
@@ -1696,7 +1861,8 @@ void flag() {
     glPopMatrix();
 }
 
-void small_tree(float base_radius, float top_radius, float height, float radius, float rind_repeat, float xz_leaves_repeat, float y_leaves_repeat) {
+void small_tree(float base_radius, float top_radius, float height, float radius, float rind_repeat, float xz_leaves_repeat, float y_leaves_repeat)
+{
     glPushMatrix();
     vertical_cylinder(base_radius, top_radius, height, 1, rind_repeat, 40, 1, 3);
     glPopMatrix();
@@ -1707,13 +1873,15 @@ void small_tree(float base_radius, float top_radius, float height, float radius,
     glPopMatrix();
 }
 
-void big_tree(float base_radius, float rind_height, float rind_repeat, float root_height, float radius, int canopy, float xz_leaves_repeat, float y_leaves_repeat, int tex) {
+void big_tree(float base_radius, float rind_height, float rind_repeat, float root_height, float radius, int canopy, float xz_leaves_repeat, float y_leaves_repeat, int tex)
+{
     glPushMatrix();
     vertical_cylinder(base_radius, 0, rind_height + root_height, 1, rind_repeat, 40, 1, 3);
     glPopMatrix();
 
     glPushMatrix();
-    for (int i = 0; i < canopy; i++) {
+    for (int i = 0; i < canopy; i++)
+    {
         glPushMatrix();
         glTranslatef(0, root_height + rind_height * i / canopy, 0);
         vertical_cylinder(radius * (canopy - i) / canopy, 0, rind_height / (canopy - 1), xz_leaves_repeat, y_leaves_repeat, 50, 1, tex);
