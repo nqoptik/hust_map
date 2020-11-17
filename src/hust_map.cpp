@@ -254,6 +254,8 @@ void reshape(int width, int height)
 
 void special(int key, int x, int y)
 {
+    (void)x;
+    (void)y;
     float dxyz = sqrt((centre_z - eye_z) * (centre_z - eye_z) + (centre_x - eye_x) * (centre_x - eye_x) + (centre_y - eye_y) * (centre_y - eye_y));
     float d0xz = sqrt((centre_z - eye_z) * (centre_z - eye_z) + (centre_x - eye_x) * (centre_x - eye_x));
 
@@ -361,6 +363,8 @@ void special(int key, int x, int y)
 
 void keyboard(unsigned char key, int x, int y)
 {
+    (void)x;
+    (void)y;
     float cos = (eye_z - centre_z) / sqrt((centre_z - eye_z) * (centre_z - eye_z) + (centre_x - eye_x) * (centre_x - eye_x));
     float sin = (centre_x - eye_x) / sqrt((centre_z - eye_z) * (centre_z - eye_z) + (centre_x - eye_x) * (centre_x - eye_x));
 
@@ -440,6 +444,8 @@ void keyboard(unsigned char key, int x, int y)
 
 void mouse(int button, int state, int x, int y)
 {
+    (void)x;
+    (void)y;
     switch (button)
     {
         case GLUT_LEFT_BUTTON:
